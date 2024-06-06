@@ -1,0 +1,62 @@
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+public class RumahSakit {
+    private String nama;
+    private String alamat;
+    private String no_telpon;
+    private List<Dokter> doktors;
+    private List<Pasien>pasiens;
+
+    public RumahSakit(String nama, String alamat, String no_telpon, List<Dokter> doktors, List<Pasien> pasiens) {
+        this.nama = nama;
+        this.alamat = alamat;
+        this.no_telpon = no_telpon;
+        this.doktors = doktors;
+        this.pasiens = pasiens;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
+    public String getNo_telpon() {
+        return no_telpon;
+    }
+
+    public void setNo_telpon(String no_telpon) {
+        this.no_telpon = no_telpon;
+    }
+
+    public void daftar(Dokter dokter){
+        daftar.add(Dokter);
+        System.out.println("SUKSES");
+    }
+
+    public void daftar(Pasien pasien){
+        daftar.add(Pasien);
+        System.out.println("SUKSES");
+    }
+
+    public void cekAntrianPasien() {
+    }
+
+    public abstract void daftar(RumahSakit rumahSakit);
+
+    public void cekListDokter() {
+    }
+}
