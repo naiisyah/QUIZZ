@@ -1,0 +1,30 @@
+import java.util.List;
+
+public class Dokter extends RumahSakit{
+    private String nama;
+    private String tanggal_lahir;
+
+    enum Jenis_kelamin{
+        LAKI_LAKI,
+        PEREMPUAN
+    }
+    private Jenis_kelamin jenisKelamin;
+    private String nomorSTR;
+    private String spesialis;
+    private int idDokter;
+    private List<Pasien>pasiens;
+
+    public Dokter(String nama, String tanggal_lahir, Jenis_kelamin jenisKelamin, String nomorSTR, String spesialis) {
+        super();
+        this.nama = nama;
+        this.tanggal_lahir = tanggal_lahir;
+        this.jenisKelamin = jenisKelamin;
+        this.nomorSTR = nomorSTR;
+        this.spesialis = spesialis;
+    }
+
+    @Override
+    public void daftar(RumahSakit rumahSakit) {
+        super.daftar();
+    }
+}
