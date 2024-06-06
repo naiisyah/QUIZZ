@@ -1,0 +1,229 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+abstract class Employee {
+    protected String name;
+    protected String birthDate;
+    protected String department;
+    protected String id;
+    protected double salary;
+
+    public Employee(String name, String birthDate, String department) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.department = department;
+        this.id = generateUniqueId();
+    }
+
+    private String generateUniqueId() {
+        String deptCode = department.equals("Product") ? "PROD" : "HR";
+        String randomNum = String.format("%03d", new Random().nextInt(1000));
+        return "000" + deptCode + birthDate + randomNum;
+    }
+
+    public static String[] getDepartment() {
+        return new String[]{"Product", "Human Resources"};
+    }
+
+    public abstract double calculateSalary();
+    
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Name: " + name + ", Birth Date: " + birthDate + ", Department: " + department + ", Salary: " + salary;
+    }
+}
+
+class Developer extends Employee {
+    public Developer(String name, String birthDate, String department) {
+        super(name, birthDate, department);
+        this.salary = calculateSalary();
+    }
+
+    @Override
+    public double calculateSalary() {
+        return 10000.0;
+    }
+}
+
+class HRStaff extends Employee {
+    public HRStaff(String name, String birthDate, String department) {
+        super(name, birthDate, department);
+        this.salary = calculateSalary();
+    }
+
+    @Override
+    public double calculateSalary() {
+        return 5000.0;
+    }
+}
+
+class Manager extends Employee {
+    public Manager(String name, String birthDate, String department) {
+        super(name, birthDate, department);
+        this.salary = calculateSalary();
+    }
+
+    @Override
+    public double calculateSalary() {
+        return 20000.0;
+    }
+}
+
+public class HRISGUI extends JFrame {
+    private JFrame frame;
+
+    private JComboBox<String> departementComboBox;
+    private JTextField nameField, birthDateField;
+    private JComboBox<String> positionComboBox;
+    private JButton addEmployeeButton, cancelButton;
+
+    private JTextArea displayArea;
+    private JTextField findIdField;
+
+    private JButton addButton;
+    private JButton showAllButton;
+
+    private List<Employee> employeeList = new ArrayList<>();
+
+    public HRISGUI() {
+        frame = new JFrame("HRIS");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+        showMainPanel();
+        frame.add(showMainPanel(), BorderLayout.CENTER);
+        frame.pack();
+        frame.setSize(600, 400);
+        frame.setVisible(true);
+    }
+
+    private JPanel showMainPanel() {
+        addButton = new JButton("Add Data");
+        showAllButton = new JButton("Show Data");
+
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+        buttonPanel.add(addButton);
+        buttonPanel.add(showAllButton);
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaintPanel(showInputPanel());
+            }
+        });
+
+        showAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaintPanel(showAllDataPanel());
+            }
+        });
+
+        return buttonPanel;
+    }
+
+    private JPanel showAllDataPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new GridLayout(1, 1));
+
+        findIdField = new JTextField(15);
+        topPanel.add(findIdField);
+
+        cancelButton = new JButton("Cancel");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(cancelButton);
+
+        StringBuilder strBuilder = new StringBuilder();
+        for (Employee employee : employeeList) {
+            strBuilder.append(employee.toString()).append("\n");
+        }
+        displayArea = new JTextArea(strBuilder.toString());
+        displayArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(displayArea);
+
+        panel.add(topPanel, BorderLayout.NORTH);
+        panel.add(buttonPanel, BorderLayout.CENTER);
+        panel.add(scrollPane, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    private void repaintPanel(JPanel newPanel) {
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(newPanel);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    private JPanel showInputPanel() {
+        JPanel inputPanel = new JPanel(new GridLayout(6, 2));
+
+        JLabel nameLabel = new JLabel("Name:");
+        nameField = new JTextField(15);
+
+        JLabel birthDateLabel = new JLabel("Birth Date (DDMMYYYY):");
+        birthDateField = new JTextField(15);
+
+        JLabel departementLabel = new JLabel("Department:");
+        String[] departments = Employee.getDepartment();
+        departementComboBox = new JComboBox<>(departments);
+
+        JLabel positionLabel = new JLabel("Position:");
+        String[] positions = {"Manager", "Developer", "HR Staff"};
+        positionComboBox = new JComboBox<>(positions);
+
+        addEmployeeButton = new JButton("Add Data");
+
+        inputPanel.add(nameLabel);
+        inputPanel.add(nameField);
+        inputPanel.add(birthDateLabel);
+        inputPanel.add(birthDateField);
+        inputPanel.add(departementLabel);
+        inputPanel.add(departementComboBox);
+        inputPanel.add(positionLabel);
+        inputPanel.add(positionComboBox);
+        inputPanel.add(addEmployeeButton);
+
+        addEmployeeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText();
+                String birthDate = birthDateField.getText();
+                String department = departementComboBox.getSelectedItem().toString();
+                String position = positionComboBox.getSelectedItem().toString();
+
+                Employee employee = null;
+                switch (position) {
+                    case "Manager":
+                        employee = new Manager(name, birthDate, department);
+                        break;
+                    case "Developer":
+                        employee = new Developer(name, birthDate, department);
+                        break;
+                    case "HR Staff":
+                        employee = new HRStaff(name, birthDate, department);
+                        break;
+                }
+
+                if (employee != null) {
+                    employeeList.add(employee);
+                    JOptionPane.showMessageDialog(HRISGUI.this, "Employee added: " + employee.toString());
+                }
+            }
+        });
+
+        return inputPanel;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new HRISGUI();
+            }
+        });
+    }
+}
